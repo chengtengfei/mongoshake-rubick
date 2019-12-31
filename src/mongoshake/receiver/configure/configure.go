@@ -13,8 +13,7 @@ type Configuration struct {
 	DestMongoDB 					string `config:"dest.db"`
 	DestMongoUsername 				string `config:"dest.username"`
 	DestMongoPassword				string `config:"dest.password"`
-	KafkaConsumerOffsetFile 		string `config:"kafka.consumer.offset.file"`
-	KafkaConsumerOffset				int64
+	KafkaConsumerGroupId			string `config:"consumer.group.id"`
 }
 
 var Options Configuration

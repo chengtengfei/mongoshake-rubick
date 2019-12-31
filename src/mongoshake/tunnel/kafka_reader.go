@@ -16,7 +16,7 @@ type KafkaReader struct {
 }
 
 func (tunnel *KafkaReader) Link(replayer []Replayer) error {
-	reader, err := kafka.NewReader(tunnel.address, conf.Options.KafkaConsumerOffset)
+	reader, err := kafka.NewReader(tunnel.address, conf.Options.KafkaConsumerGroupId)
 	if err != nil {
 		LOG.Critical("KafkaReader link[%v] create reader error[%v]", tunnel.address, err)
 		return err
@@ -74,8 +74,6 @@ func (tunnel *KafkaReader) replay() {
 
 		replay := tunnel.replayer[newLogs.Shard]
 		if replay.Sync(newLogs, func(context *kafka.Message) func() {
-			conf.Options.KafkaConsumerOffset = message.Offset
-			LOG.Info("消费消息的Offset-> %v", message.Offset)
 			return func() {
 				// user can add the ack mechanism so that send ack
 				// to kafka to move kafka offset forward. We don't offer this

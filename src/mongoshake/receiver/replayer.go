@@ -4,7 +4,6 @@ import (
 	"mongoshake/common"
 	"mongoshake/modules"
 	"mongoshake/oplog"
-	conf "mongoshake/receiver/configure"
 	"mongoshake/tunnel"
 	"strings"
 
@@ -130,7 +129,6 @@ func (er *ExampleReplayer) handler() {
 			}
 			oplogs[i].RawSize = len(raw)
 			// LOG.Info(oplogs[i]) // just print for test, users can modify to fulfill different needs
-			// TODO
 			go SaveToMongo(oplogs[i])
 		}
 
@@ -175,7 +173,7 @@ func SaveToMongo(oplog *oplog.PartialLog)  {
 			sPicInfo.Pic = vPicInfo.Pic
 			sPicInfo.OriginObjectIdHex = vPicInfo.OriginObjectId.Hex()
 			sPicInfo.CreateTime = vPicInfo.OriginObjectId.Time().String()
-			sPicInfo.VillageCode = tunnelAddressToVillageCode()
+			sPicInfo.VillageCode = vPicInfo.VillageCode
 			con := ss.C(collectionName)
 			errCon := con.Insert(&sPicInfo)
 			if errCon != nil {
@@ -205,15 +203,12 @@ func SaveToMongo(oplog *oplog.PartialLog)  {
 
 }
 
-func tunnelAddressToVillageCode() string {
-	return strings.Split(conf.Options.TunnelAddress, "@")[0]
-}
-
 
 type VillagePicInfo struct {
 	OriginObjectId		bson.ObjectId	`bson:"_id"`
 	Pid 				string			`bson:"pid"`
 	Pic					[]byte			`bson:"pic"`
+	VillageCode			string			`bson:"village_code"`
 }
 
 type StreetPicInfo struct {
