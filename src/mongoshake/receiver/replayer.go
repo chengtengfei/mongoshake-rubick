@@ -151,6 +151,11 @@ func (er *ExampleReplayer) handler() {
 
 func SaveToMongo(oplog *oplog.PartialLog)  {
 	LOG.Info(oplog)
+	defer func() {
+		if r := recover(); r != nil {
+			_ = LOG.Error("[MyProcess]不可恢复的错误, err-> %v, 数据内容-> %v", r, oplog)
+		}
+	}()
 	ss := NewSessionStore()
 	defer ss.Close()
 	namespace := strings.Split(oplog.Namespace, ".");

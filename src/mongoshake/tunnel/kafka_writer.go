@@ -56,6 +56,7 @@ func (tunnel *KafkaWriter) Send(message *WMessage) int64 {
 	err := tunnel.writer.SimpleWrite(byteBuffer.Bytes())
 
 	if err != nil {
+		LOG.Error("KafkaWriter send[%v] send bytes size [%v]", tunnel.RemoteAddr, len(byteBuffer.Bytes()))
 		LOG.Error("KafkaWriter send[%v] error[%v]", tunnel.RemoteAddr, err)
 		return ReplyError
 	}

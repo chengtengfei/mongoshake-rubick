@@ -36,7 +36,7 @@ func NewConfig() *Config {
 	config.Producer.Return.Successes = true
 	config.Producer.Partitioner = sarama.NewManualPartitioner
 
-	config.Producer.MaxMessageBytes = 10 * 1024 * 1024
+	config.Producer.MaxMessageBytes = 1024 * 1024 * 1024
 
 	return &Config{
 		Config: config,

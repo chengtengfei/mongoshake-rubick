@@ -27,9 +27,14 @@ func NewReader(address string, offset int64) (*Reader, error) {
 		return nil, err
 	}
 
+	// 记录offset会比实际少1
+	if offset > 0 {
+		offset = offset + 1
+	}
+
 	// pay attention: we fetch data from oldest offset when starting by default, so a lot data will be
 	// replay when receiver restarts.
-	partitionConsumer, err := consumer.ConsumePartition(topic, defaultPartition, offset + 1)
+	partitionConsumer, err := consumer.ConsumePartition(topic, defaultPartition, offset)
 	if err != nil {
 		return nil, err
 	}

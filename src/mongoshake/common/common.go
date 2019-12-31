@@ -93,6 +93,21 @@ func InitialLogger(logDir, logFile, level string, logBuffer bool, verbose bool) 
 		fileLogger.SetFormat("[%D %T] [%L] [%s] %M")
 		fileLogger.SetRotateMaxBackup(30)
 		LOG.AddFilter("file", logLevel, fileLogger)
+
+		// error log单独打印在一个文件
+		errorLogFile := logFile
+		lastDotIndex := strings.LastIndex(errorLogFile, ".")
+		if lastDotIndex != -1 {
+			errorLogFile = errorLogFile[:lastDotIndex] + "-error" + errorLogFile[lastDotIndex:]
+		} else {
+			errorLogFile = errorLogFile + "-error"
+		}
+		errorFileLogger := LOG.NewFileLogWriter(fmt.Sprintf("%s/%s", logDir, errorLogFile), true)
+		errorFileLogger.SetRotateSize(100 * 1024 * 1024)
+		errorFileLogger.SetRotateDaily(true)
+		errorFileLogger.SetFormat("[%D %T] [%L] [%s] %M")
+		errorFileLogger.SetRotateMaxBackup(30)
+		LOG.AddFilter("file", logLevel, errorFileLogger)
 	} else {
 		return fmt.Errorf("log.file[%v] shouldn't be empty", logFile)
 	}
