@@ -24,8 +24,8 @@ func main() {
 	defer LOG.Close()
 
 	// argument options
-	configuration := flag.String("conf", "D:\\Projects\\mongoshake\\receiver.conf", "configure file absolute path")
-	verbose := flag.Bool("verbose", true, "show logs on console")
+	configuration := flag.String("conf", "", "configure file absolute path")
+	verbose := flag.Bool("verbose", false, "show logs on console")
 	flag.Parse()
 
 	if *configuration == "" {
