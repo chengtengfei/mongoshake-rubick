@@ -29,7 +29,7 @@ type Config struct {
 
 func NewConfig() *Config {
 	config := sarama.NewConfig()
-	config.Version = sarama.V2_3_0_0
+	config.Version = sarama.V2_2_0_0
 	config.MetricRegistry = metrics.NewRegistry()
 
 	config.Producer.Return.Errors = true

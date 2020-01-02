@@ -56,7 +56,15 @@ func NewWriteController(worker *Worker) *WriteController {
 
 	// create t by options
 	factory := tunnel.WriterFactory{Name: conf.Options.Tunnel}
-	if writeController.tunnel = factory.Create(conf.Options.TunnelAddress, worker.id); writeController.tunnel != nil {
+	otherInfo := tunnel.WriteOtherInfo{
+		TunnelKafkaSecurity: conf.Options.TunnelKafkaSecurity,
+		KafkaClientCer:      conf.Options.KafkaClientCer,
+		KafkaClientKey:      conf.Options.KafkaClientKey,
+		KafkaServerCer:      conf.Options.KafkaServerCer,
+		KafkaSaslUser:       conf.Options.KafkaSaslUser,
+		KafkaSaslPassword:   conf.Options.KafkaSaslPassword,
+	}
+	if writeController.tunnel = factory.Create(conf.Options.TunnelAddress, &otherInfo, worker.id); writeController.tunnel != nil {
 		if writeController.tunnel.Prepare() {
 			return writeController
 		}

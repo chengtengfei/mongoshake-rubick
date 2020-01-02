@@ -12,10 +12,25 @@ import (
 type KafkaWriter struct {
 	RemoteAddr string
 	writer     *kafka.SyncWriter
+
+	TunnelKafkaSecurity string
+	KafkaClientCer		string
+	KafkaClientKey		string
+	KafkaServerCer		string
+	KafkaSaslUser		string
+	KafkaSaslPassword   string
 }
 
 func (tunnel *KafkaWriter) Prepare() bool {
-	writer, err := kafka.NewSyncWriter(tunnel.RemoteAddr)
+	writer, err := kafka.NewSyncWriter(&kafka.KafkaWriteInfo{
+		RemoteAddr:          tunnel.RemoteAddr,
+		TunnelKafkaSecurity: tunnel.TunnelKafkaSecurity,
+		KafkaClientCer:      tunnel.KafkaClientCer,
+		KafkaClientKey:      tunnel.KafkaClientKey,
+		KafkaServerCer:      tunnel.KafkaServerCer,
+		KafkaSaslUser:       tunnel.KafkaSaslUser,
+		KafkaSaslPassword:   tunnel.KafkaSaslPassword,
+	})
 	if err != nil {
 		LOG.Critical("KafkaWriter prepare[%v] create writer error[%v]", tunnel.RemoteAddr, err)
 		return false
@@ -54,6 +69,8 @@ func (tunnel *KafkaWriter) Send(message *WMessage) int64 {
 	}
 
 	err := tunnel.writer.SimpleWrite(byteBuffer.Bytes())
+
+	LOG.Info("KafkaWriter send[%v] send bytes size [%v]", tunnel.RemoteAddr, len(byteBuffer.Bytes()))
 
 	if err != nil {
 		LOG.Error("KafkaWriter send[%v] send bytes size [%v]", tunnel.RemoteAddr, len(byteBuffer.Bytes()))

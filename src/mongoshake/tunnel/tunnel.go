@@ -147,12 +147,30 @@ type WriterFactory struct {
 	Name string
 }
 
+// 准备write的是要的其他字段信息
+type WriteOtherInfo struct {
+	TunnelKafkaSecurity string
+	KafkaClientCer		string
+	KafkaClientKey		string
+	KafkaServerCer		string
+	KafkaSaslUser		string
+	KafkaSaslPassword   string
+}
+
 // create specific Tunnel with tunnel name and pass connection
 // or usefully meta
-func (factory *WriterFactory) Create(address []string, workerId uint32) Writer {
+func (factory *WriterFactory) Create(address []string, writeOtherInfo *WriteOtherInfo ,workerId uint32) Writer {
 	switch factory.Name {
 	case "kafka":
-		return &KafkaWriter{RemoteAddr: address[0]}
+		return &KafkaWriter{
+			RemoteAddr:          address[0],
+			TunnelKafkaSecurity: writeOtherInfo.TunnelKafkaSecurity,
+			KafkaClientCer:      writeOtherInfo.KafkaClientCer,
+			KafkaClientKey:      writeOtherInfo.KafkaClientKey,
+			KafkaServerCer:      writeOtherInfo.KafkaServerCer,
+			KafkaSaslUser:       writeOtherInfo.KafkaSaslUser,
+			KafkaSaslPassword:   writeOtherInfo.KafkaSaslPassword,
+		}
 	case "tcp":
 		return &TCPWriter{RemoteAddr: address[0]}
 	case "rpc":

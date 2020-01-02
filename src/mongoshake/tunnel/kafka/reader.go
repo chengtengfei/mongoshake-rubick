@@ -23,9 +23,6 @@ func NewReader(address string, consumerGroupId string) (*Reader, error) {
 		return nil, err
 	}
 
-	LOG.Info("Topic = %v", topic)
-	// topic = `^match.*`
-
 	// init (custom) config, enable errors and notifications
 	config := cluster.NewConfig()
 	config.Consumer.Return.Errors = true
@@ -45,7 +42,7 @@ func NewReader(address string, consumerGroupId string) (*Reader, error) {
 		panic(err)
 	}
 
-	LOG.Info("Connect [%v] ConsumerGroupId [%v] consumer Topic [%v]", brokers, consumerGroupId, topic)
+	LOG.Info("Connect %v ConsumerGroupId [%v] consumer Topic [%v]", brokers, consumerGroupId, topic)
 
 	r := &Reader{
 		brokers:        brokers,
@@ -94,7 +91,7 @@ func (r *Reader) send() {
 		select {
 		case msg, ok := <- r.clusterConsumer.Messages():
 			if ok {
-				LOG.Info("Topic=%s, Partition=%d, Offset=%d, Key=%s, Value=%s", msg.Topic, msg.Partition, msg.Offset, msg.Key, msg.Value)
+				LOG.Info("Topic=%s, Partition=%d, Offset=%d", msg.Topic, msg.Partition, msg.Offset)
 				// mark message as processed
 				r.clusterConsumer.MarkOffset(msg, "")
 				r.messageChannel <- &Message{

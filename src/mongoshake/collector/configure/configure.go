@@ -22,6 +22,12 @@ type Configuration struct {
 	FetcherBufferCapacity    int      `config:"fetcher.buffer_capacity"`
 	Tunnel                   string   `config:"tunnel"`
 	TunnelAddress            []string `config:"tunnel.address"`
+	TunnelKafkaSecurity		 string	  `config:"tunnel.kafka.security"`
+	KafkaClientCer			 string	  `config:"kafka.client.cer"`
+	KafkaClientKey			 string	  `config:"kafka.client.key"`
+	KafkaServerCer			 string   `config:"kafka.server.cer"`
+	KafkaSaslUser			 string   `config:"kafka.sasl.user"`
+	KafkaSaslPassword        string   `config:"kafka.sasl.password"`
 	MasterQuorum             bool     `config:"master_quorum"`
 	ContextStorage           string   `config:"context.storage"`
 	ContextStorageUrl        string   `config:"context.storage.url"`
