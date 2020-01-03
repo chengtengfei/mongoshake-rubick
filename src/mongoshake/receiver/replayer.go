@@ -167,12 +167,15 @@ func SaveToMongo(oplog *oplog.PartialLog)  {
 			errUnmarshal := bson.Unmarshal(tempBytes, &vPicInfo)
 			if errUnmarshal != nil {
 				_ = LOG.Error("[MyProcess]解析内容出错, err-> %v, 数据内容-> %v", errUnmarshal, oplog)
+				return
 			}
 			sPicInfo := new(StreetPicInfo)
 			sPicInfo.Pid = vPicInfo.Pid
 			sPicInfo.Pic = vPicInfo.Pic
-			sPicInfo.OriginObjectIdHex = vPicInfo.OriginObjectId.Hex()
-			sPicInfo.CreateTime = vPicInfo.OriginObjectId.Time().String()
+			sPicInfo.OriginObjectIdHex = vPicInfo.OriginObjectId.String()
+			if bson.IsObjectIdHex(vPicInfo.OriginObjectId.Hex()) {
+				sPicInfo.CreateTime = vPicInfo.OriginObjectId.Time().String()
+			}
 			sPicInfo.VillageCode = vPicInfo.VillageCode
 			con := ss.C(collectionName)
 			errCon := con.Insert(&sPicInfo)
@@ -186,12 +189,13 @@ func SaveToMongo(oplog *oplog.PartialLog)  {
 			errUnmarshal := bson.Unmarshal(tempBytes, &vPicInfo)
 			if errUnmarshal != nil {
 				_ = LOG.Error("[MyProcess]解析内容出错, err-> %v, 数据内容—> %v", errUnmarshal, oplog)
+				return
 			}
 			if vPicInfo.OriginObjectId == "" {
 				_ = LOG.Error("[MyProcess]删除数据错误,未指定业务逻辑ID删除记录-> %v", oplog)
 			} else {
 				con := ss.C(collectionName)
-				err := con.Remove(bson.M{"origin_mongo_id": vPicInfo.OriginObjectId.Hex()})
+				err := con.Remove(bson.M{"origin_mongo_id": vPicInfo.OriginObjectId.String()})
 				if err != nil {
 					_ = LOG.Error("[MyProcess]删除数据错误, err-> %v, 数据内容-> %v", err, oplog)
 				}
